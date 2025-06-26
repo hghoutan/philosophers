@@ -1,0 +1,10 @@
+services:
+  philosophers:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./philo:/philosophers/philo
+    working_dir: /philosophers/philo
+    command: sh -c "make && ./philo 5 800 200 200"
+    tty: true
