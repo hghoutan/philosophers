@@ -6,7 +6,7 @@
 /*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 18:52:02 by hghoutan          #+#    #+#             */
-/*   Updated: 2025/06/26 21:06:25 by macbook          ###   ########.fr       */
+/*   Updated: 2025/06/28 18:58:26 by macbook          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,20 +46,69 @@ int parse_data(t_philo_conf *conf, char **argv, int argc) {
     if (conf->philo_count <= 0 || conf->die_time_ms <= 0 ||
       conf->eat_time_ms <= 0 || conf->sleep_time_ms <= 0 || (argv[5] && conf->meals_required <= 0))
         return -1;
-
-  // TODO: delete this line 
-  printf("Parsed data:\nPhilosophers: %d\nDie time: %d\nEat time: %d\nSleep time: %d\nMeals required: %d\n",
-    conf->philo_count, conf->die_time_ms, conf->eat_time_ms, conf->sleep_time_ms,
-    conf->is_meals_required_set);
-      return 0;
+    return 0;
   }
 
-void *something(void *arg) {
-  t_philo *philo = (t_philo *)arg;
-  printf("Thread started for philosopher %d\n", philo->id);
-  return arg;
-}
+void *philosopher_routine(void *arg) {
+  t_philo       *philo;
+  unsigned int  i;
 
+  philo = (t_philo *)arg;
+  i = 0;
+
+  while (i < philo->conf->meals_required) {
+    // Thinking
+
+    pthread_mutex_lock(&philo->conf->print_mutex);
+    printf("%09lu %d is thinking\n", get_adjusted_time_ms(philo->conf),philo->id);
+    pthread_mutex_unlock(&philo->conf->print_mutex);
+
+    
+    if (philo->id % 2 == 0) {
+      pthread_mutex_lock(philo->left_fork);
+      pthread_mutex_lock(&philo->conf->print_mutex);
+      printf("%09lu %d has taken a fork\n", get_adjusted_time_ms(philo->conf), philo->id);
+      pthread_mutex_unlock(&philo->conf->print_mutex);
+
+      pthread_mutex_lock(philo->right_fork);
+      pthread_mutex_lock(&philo->conf->print_mutex);
+      printf("%09lu %d has taken a fork\n", get_adjusted_time_ms(philo->conf), philo->id);
+      pthread_mutex_unlock(&philo->conf->print_mutex);
+    } else {
+      pthread_mutex_lock(philo->right_fork);
+      pthread_mutex_lock(&philo->conf->print_mutex);
+      printf("%09lu %d has taken a fork\n", get_adjusted_time_ms(philo->conf), philo->id);
+      pthread_mutex_unlock(&philo->conf->print_mutex);
+      
+      pthread_mutex_lock(philo->left_fork);
+      pthread_mutex_lock(&philo->conf->print_mutex);
+      printf("%09lu %d has taken a fork\n", get_adjusted_time_ms(philo->conf), philo->id);
+      pthread_mutex_unlock(&philo->conf->print_mutex);
+    }
+
+    // Eat 
+    pthread_mutex_lock(&philo->conf->print_mutex);
+    printf("%09lu %d is eating\n", get_adjusted_time_ms(philo->conf), philo->id);
+    pthread_mutex_unlock(&philo->conf->print_mutex);
+    usleep(philo->conf->eat_time_ms * 1000);
+    
+    pthread_mutex_lock(&philo->conf->meal_mutex);
+    philo->meals_eaten++;
+    pthread_mutex_unlock(&philo->conf->meal_mutex);
+    
+    pthread_mutex_unlock(philo->left_fork);
+    pthread_mutex_unlock(philo->right_fork);
+    
+    pthread_mutex_lock(&philo->conf->print_mutex);
+    printf("%09lu %d is sleeping\n", get_adjusted_time_ms(philo->conf), philo->id);
+    pthread_mutex_unlock(&philo->conf->print_mutex);
+    usleep(philo->conf->sleep_time_ms * 1000);
+
+    
+    i++;
+  }
+  return NULL;
+}
 
 void init_philo(t_philo *philos, t_philo_conf *conf) {
   unsigned int i;
@@ -71,7 +120,6 @@ void init_philo(t_philo *philos, t_philo_conf *conf) {
     philos[i].left_fork = &conf->forks[i];
     philos[i].right_fork = &conf->forks[(i + 1) % conf->philo_count];
     philos[i].meals_eaten = 0;
-    printf("Initialized philosopher %d\n", i);
     i++;
   }
 }
@@ -89,7 +137,6 @@ int init_forks(t_philo_conf *conf) {
   while (i < conf->philo_count) {
     if (pthread_mutex_init(&conf->forks[i], NULL) != 0)
       return 1;
-    printf("Initialized fork %d\n", i);
     i++;
   }
   return 0;
@@ -98,10 +145,12 @@ int init_forks(t_philo_conf *conf) {
 void clean_mutexes(t_philo_conf conf) {
   unsigned int i;
 
+
+  pthread_mutex_destroy(&conf.print_mutex);
+  pthread_mutex_destroy(&conf.meal_mutex);
   i = 0;
   while(i < conf.philo_count) {
     pthread_mutex_destroy(&conf.forks[i]);
-    printf("Destroyed fork %d\n", i);
     i++;
   }
 }
@@ -110,12 +159,14 @@ void free_all(t_philo *philos, pthread_t *threads, pthread_mutex_t *forks) {
     free(philos);
     free(threads);
     free(forks);
-    printf("Freed all allocated memory.\n");
 }
 
 
 
 int init_simulation(t_philo_conf *conf, t_philo **philos, pthread_t **threads) {
+    conf->start_time_ms = get_time_ms();
+    pthread_mutex_init(&conf->print_mutex, NULL);
+    pthread_mutex_init(&conf->meal_mutex, NULL);
     *threads = malloc(conf->philo_count * sizeof(pthread_t));
     if (!*threads)
         return handle_allocation_error();
@@ -145,8 +196,6 @@ int init_simulation(t_philo_conf *conf, t_philo **philos, pthread_t **threads) {
 
 
 int main(int argc, char **argv) {
-
-    setbuf(stdout, NULL); // TODO delete 
     t_philo_conf conf; 
     pthread_t *threads;
     t_philo *philos;
@@ -163,21 +212,18 @@ int main(int argc, char **argv) {
 
     i = 0;
     while (i < conf.philo_count) {
-      pthread_create(&threads[i], NULL, &something, &philos[i]);
-      printf("Created thread for philosopher %d\n", i);
+      pthread_create(&threads[i], NULL, &philosopher_routine, &philos[i]);
       i++;
     }
 
     i = 0;
     while (i < conf.philo_count) {
       pthread_join(threads[i], NULL);
-      printf("Joined thread for philosopher %d\n", i);
       i++;
     }
     clean_mutexes(conf);
     free(threads);
     free(philos);
     free(conf.forks);
-    printf("Simulation finished.\n");
     return 0;
 }

@@ -16,7 +16,11 @@ typedef struct s_philo_conf {
     unsigned int sleep_time_ms;
     unsigned int meals_required;
     unsigned int is_meals_required_set;
+    unsigned long start_time_ms;
+
     pthread_mutex_t *forks;
+    pthread_mutex_t print_mutex;
+    pthread_mutex_t meal_mutex;
 } t_philo_conf;
 
 
@@ -31,6 +35,7 @@ typedef struct s_philo {
 
 unsigned int	ft_atoi(const char *str);
 unsigned long get_time_ms();
+unsigned long get_adjusted_time_ms(t_philo_conf *conf);
 
 
 #endif
