@@ -9,6 +9,10 @@
 #include <pthread.h>
 #include <limits.h>
 
+
+struct s_philo;
+typedef struct s_philo t_philo;
+
 typedef struct s_philo_conf {
     unsigned int philo_count;
     unsigned int die_time_ms;
@@ -17,12 +21,13 @@ typedef struct s_philo_conf {
     unsigned int meals_required;
     unsigned int is_meals_required_set;
     unsigned long start_time_ms;
+    unsigned int someone_died;
 
+    t_philo         *philos;
     pthread_mutex_t *forks;
     pthread_mutex_t print_mutex;
     pthread_mutex_t meal_mutex;
 } t_philo_conf;
-
 
 typedef struct s_philo {
     unsigned int id;
