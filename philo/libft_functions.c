@@ -6,7 +6,7 @@
 /*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 19:20:23 by hghoutan          #+#    #+#             */
-/*   Updated: 2025/06/26 17:11:49 by macbook          ###   ########.fr       */
+/*   Updated: 2025/06/30 19:04:29 by macbook          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 unsigned int	ft_atoi(const char *str)
 {
-	int	i;
 	unsigned int	num;
+	int				i;
 
 	i = 0;
 	num = 0;
@@ -24,8 +24,8 @@ unsigned int	ft_atoi(const char *str)
 	while (str[i] >= '0' && str[i] <= '9')
 	{
 		num = (num * 10) + (str[i] - 48);
-    if (num > UINT_MAX)
-        return (UINT_MAX);
+		if (num > UINT_MAX)
+			return (UINT_MAX);
 		i++;
 	}
 	return (num);
