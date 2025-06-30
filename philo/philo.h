@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/30 18:16:50 by macbook           #+#    #+#             */
+/*   Updated: 2025/06/30 18:16:51 by macbook          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
 #define PHILO_H
 
@@ -41,6 +53,14 @@ typedef struct s_philo {
 unsigned int	ft_atoi(const char *str);
 unsigned long get_time_ms();
 unsigned long get_adjusted_time_ms(t_philo_conf *conf);
+int           validate_input(char *str);
+int           parse_data(t_philo_conf *conf, char **argv, int argc);
+int           init_simulation(t_philo_conf *conf, t_philo **philos, pthread_t **threads);
+void          *philosopher_routine(void *arg);
+void          print_status(t_philo *philo, const char *status);
+void          *monitor_routine(void *arg);
 
+void free_all(t_philo *philos, pthread_t *threads, pthread_mutex_t *forks);
+void free_all_resources(t_philo_conf *conf, pthread_t *threads, t_philo *philos);
 
 #endif
