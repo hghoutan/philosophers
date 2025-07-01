@@ -6,7 +6,7 @@
 /*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 18:52:02 by hghoutan          #+#    #+#             */
-/*   Updated: 2025/06/30 20:33:23 by macbook          ###   ########.fr       */
+/*   Updated: 2025/07/01 16:07:16 by macbook          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	setup_and_validate(int argc, char **argv, t_philo_conf *conf)
 			time_to_sleep [number_of_times_each_philosopher_must_eat]\n");
 		return (1);
 	}
-	if (parse_data(&conf, argv, argc))
+	if (parse_data(conf, argv, argc))
 		return (1);
 	return (0);
 }
@@ -43,11 +43,11 @@ int	start_threads(t_philo_conf *conf, t_philo *philos, pthread_t *threads,
 	{
 		if (pthread_create(&threads[i], NULL, &philosopher_routine,
 				&philos[i]) != 0)
-			return (error_exit("Cannot create thread", &conf, threads, philos));
+			return (error_exit("Cannot create thread", conf, threads, philos));
 		i++;
 	}
-	if (pthread_create(&monitor_thread, NULL, &monitor_routine, &conf) != 0)
-		return (error_exit("Cannot create monitor thread ", &conf, threads,
+	if (pthread_create(monitor_thread, NULL, &monitor_routine, conf) != 0)
+		return (error_exit("Cannot create monitor thread ", conf, threads,
 				philos));
 	return (0);
 }
@@ -60,13 +60,13 @@ int	main(int argc, char **argv)
 	t_philo			*philos;
 	unsigned int	i;
 
-	i = 0;
-	conf.philos = philos;
 	if (setup_and_validate(argc, argv, &conf))
 		return (1);
 	if (init_simulation(&conf, &philos, &threads))
 		return (1);
-	if (start_threads(&conf, philos, threads, monitor_thread))
+	i = 0;
+	conf.philos = philos;
+	if (start_threads(&conf, philos, threads, &monitor_thread))
 		return (1);
 	while (i < conf.philo_count)
 	{
