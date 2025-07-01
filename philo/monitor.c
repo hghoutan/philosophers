@@ -6,7 +6,7 @@
 /*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:07:56 by macbook           #+#    #+#             */
-/*   Updated: 2025/07/01 15:55:46 by macbook          ###   ########.fr       */
+/*   Updated: 2025/07/01 16:47:12 by macbook          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,24 @@
 int	check_philo_death(t_philo_conf *conf, unsigned int i)
 {
 	unsigned long	now;
+	unsigned long	last_meal;
 
 	pthread_mutex_lock(&conf->meal_mutex);
 	now = get_time_ms();
-	if (now - conf->philos[i].last_meal_time > conf->die_time_ms)
+	last_meal = conf->philos[i].last_meal_time;
+	pthread_mutex_unlock(&conf->meal_mutex);
+	if (now - last_meal > conf->die_time_ms)
 	{
-		pthread_mutex_unlock(&conf->meal_mutex);
-		pthread_mutex_lock(&conf->print_mutex);
-		printf("%09lu %d died\n", get_adjusted_time_ms(conf),
-			conf->philos[i].id);
-		conf->someone_died = 1;
-		pthread_mutex_unlock(&conf->print_mutex);
+		pthread_mutex_lock(&conf->death_mutex);
+		if (!conf->someone_died && !conf->simulation_stop)
+		{
+			conf->someone_died = 1;
+			pthread_mutex_lock(&conf->print_mutex);
+			printf("%09lu %d died\n", get_adjusted_time_ms(conf),
+				conf->philos[i].id);
+			pthread_mutex_unlock(&conf->print_mutex);
+		}
+		pthread_mutex_unlock(&conf->death_mutex);
 		return (1);
 	}
 	pthread_mutex_unlock(&conf->meal_mutex);
@@ -35,9 +42,9 @@ int	check_philo_death(t_philo_conf *conf, unsigned int i)
 int	all_philos_finished(t_philo_conf *conf)
 {
 	unsigned int	i;
-	int				done;
+	int				all_done;
 
-	done = 1;
+	all_done = 1;
 	i = 0;
 	if (!conf->is_meals_required_set)
 		return (0);
@@ -46,13 +53,19 @@ int	all_philos_finished(t_philo_conf *conf)
 	{
 		if (conf->philos[i].meals_eaten < conf->meals_required)
 		{
-			done = 0;
+			all_done = 0;
 			break ;
 		}
 		i++;
 	}
 	pthread_mutex_unlock(&conf->meal_mutex);
-	return (done);
+	if (all_done)
+	{
+		pthread_mutex_lock(&conf->death_mutex);
+		conf->simulation_stop = 1;
+		pthread_mutex_unlock(&conf->death_mutex);
+	}
+	return (all_done);
 }
 
 void	*monitor_routine(void *arg)
@@ -61,10 +74,11 @@ void	*monitor_routine(void *arg)
 	unsigned int	i;
 
 	conf = (t_philo_conf *)arg;
-	while (1)
+	usleep(1000);
+	while (!should_stop_simulation(conf))
 	{
 		i = 0;
-		while (i < conf->philo_count)
+		while (i < conf->philo_count && !should_stop_simulation(conf))
 		{
 			if (check_philo_death(conf, i))
 				return (NULL);
@@ -72,7 +86,7 @@ void	*monitor_routine(void *arg)
 		}
 		if (all_philos_finished(conf))
 			return (NULL);
-		usleep(1000);
+		usleep(500);
 	}
 	return (NULL);
 }

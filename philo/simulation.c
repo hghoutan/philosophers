@@ -6,7 +6,7 @@
 /*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:01:12 by macbook           #+#    #+#             */
-/*   Updated: 2025/06/30 20:24:28 by macbook          ###   ########.fr       */
+/*   Updated: 2025/07/01 16:36:26 by macbook          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,10 @@ int	allocate_resources(t_philo_conf *conf, t_philo **philos,
 int	init_simulation(t_philo_conf *conf, t_philo **philos, pthread_t **threads)
 {
 	conf->start_time_ms = get_time_ms();
+	conf->simulation_stop = 0;
 	pthread_mutex_init(&conf->print_mutex, NULL);
 	pthread_mutex_init(&conf->meal_mutex, NULL);
+	pthread_mutex_init(&conf->death_mutex, NULL);
 	if (allocate_resources(conf, philos, threads))
 		return (1);
 	if (init_forks(conf))

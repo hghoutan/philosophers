@@ -6,7 +6,7 @@
 #    By: macbook <macbook@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/21 19:23:13 by hghoutan          #+#    #+#              #
-#    Updated: 2025/06/30 18:15:52 by macbook          ###   ########.fr        #
+#    Updated: 2025/07/01 16:46:43 by macbook          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ CC			= cc
 CFLAGS	= -Wall -Wextra -Werror -g
 NAME		= philo
 
-SRC			= main.c utils.c simulation.c philosopher.c monitor.c cleanup.c libft_functions.c
+SRC			= main.c utils.c simulation.c philosopher.c monitor.c cleanup.c libft_functions.c utils_sup.c
 OBJ			= $(SRC:.c=.o)
 
 all: $(NAME)
