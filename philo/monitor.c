@@ -6,7 +6,7 @@
 /*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:07:56 by macbook           #+#    #+#             */
-/*   Updated: 2025/07/01 16:47:12 by macbook          ###   ########.fr       */
+/*   Updated: 2025/07/01 17:43:08 by macbook          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ int	check_philo_death(t_philo_conf *conf, unsigned int i)
 		pthread_mutex_unlock(&conf->death_mutex);
 		return (1);
 	}
-	pthread_mutex_unlock(&conf->meal_mutex);
 	return (0);
 }
 

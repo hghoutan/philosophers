@@ -6,7 +6,7 @@
 /*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 16:45:49 by macbook           #+#    #+#             */
-/*   Updated: 2025/07/01 17:03:02 by macbook          ###   ########.fr       */
+/*   Updated: 2025/07/01 17:43:37 by macbook          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,18 @@ void	precise_usleep(unsigned long time_ms)
 {
 	unsigned long	start;
 	unsigned long	current;
+	unsigned long	remaining;
 
 	start = get_time_ms();
 	while (1)
 	{
 		current = get_time_ms();
+		remaining = time_ms - (current - start);
 		if (current - start >= time_ms)
 			break ;
-		usleep(100);
+		if (remaining > 10)
+			usleep((remaining / 2) * 1000);
+		else
+			usleep(100);
 	}
 }
