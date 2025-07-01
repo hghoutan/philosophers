@@ -3,7 +3,7 @@
 docker compose up --build -d
 
 PHILO_COUNT=4
-TIME_TO_DIE=410
+TIME_TO_DIE=800
 TIME_TO_EAT=200
 TIME_TO_SLEEP=200
 MEALS_REQUIRED=2
@@ -14,7 +14,7 @@ MEALS_REQUIRED=2
 
 # For Deadlocks
 docker compose run --rm -it philosophers valgrind --tool=helgrind ./philo \
-  $PHILO_COUNT $TIME_TO_DIE $TIME_TO_EAT $TIME_TO_SLEEP
+  $PHILO_COUNT $TIME_TO_DIE $TIME_TO_EAT $TIME_TO_SLEEP $MEALS_REQUIRED
 
 
 docker compose run --rm philosophers make fclean
