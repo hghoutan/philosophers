@@ -6,7 +6,7 @@
 /*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:09:31 by macbook           #+#    #+#             */
-/*   Updated: 2025/06/30 19:45:35 by macbook          ###   ########.fr       */
+/*   Updated: 2025/07/01 16:22:40 by macbook          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void	clean_mutexes(t_philo_conf conf)
 
 	pthread_mutex_destroy(&conf.print_mutex);
 	pthread_mutex_destroy(&conf.meal_mutex);
+	pthread_mutex_destroy(&conf.death_mutex);
 	i = 0;
 	while (i < conf.philo_count)
 	{

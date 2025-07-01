@@ -6,7 +6,7 @@
 /*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:16:50 by macbook           #+#    #+#             */
-/*   Updated: 2025/06/30 20:11:33 by macbook          ###   ########.fr       */
+/*   Updated: 2025/07/01 17:04:03 by macbook          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,13 @@ typedef struct s_philo_conf
 	unsigned int		is_meals_required_set;
 	unsigned long		start_time_ms;
 	unsigned int		someone_died;
+	int					simulation_stop;
 
 	t_philo				*philos;
 	pthread_mutex_t		*forks;
 	pthread_mutex_t		print_mutex;
 	pthread_mutex_t		meal_mutex;
+	pthread_mutex_t		death_mutex;
 }						t_philo_conf;
 
 typedef struct s_philo
@@ -66,5 +68,7 @@ void					free_all(t_philo *philos, pthread_t *threads,
 							pthread_mutex_t *forks);
 void					free_all_resources(t_philo_conf *conf,
 							pthread_t *threads, t_philo *philos);
+int						should_stop_simulation(t_philo_conf *conf);
+void					precise_usleep(unsigned long time_ms);
 
 #endif
