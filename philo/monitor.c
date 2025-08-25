@@ -6,7 +6,7 @@
 /*   By: hghoutan <hghoutan@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:07:56 by macbook           #+#    #+#             */
-/*   Updated: 2025/08/25 14:36:02 by hghoutan         ###   ########.fr       */
+/*   Updated: 2025/08/25 15:57:42 by hghoutan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	*monitor_routine(void *arg)
 	unsigned int	i;
 
 	conf = (t_philo_conf *)arg;
-	usleep(1000);
+	//usleep(1000);
 	while (!should_stop_simulation(conf))
 	{
 		i = 0;
@@ -88,7 +88,7 @@ void	*monitor_routine(void *arg)
 		}
 		if (all_philos_finished(conf))
 			return (NULL);
-		usleep(500);
+		usleep(25);
 	}
 	return (NULL);
 }

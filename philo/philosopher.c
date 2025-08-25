@@ -6,7 +6,7 @@
 /*   By: hghoutan <hghoutan@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:29 by macbook           #+#    #+#             */
-/*   Updated: 2025/08/25 11:38:30 by hghoutan         ###   ########.fr       */
+/*   Updated: 2025/08/25 16:10:24 by hghoutan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	take_forks(t_philo *philo)
 		pthread_mutex_lock(philo->left_fork);
 		print_status(philo, "has taken a fork");
 		while (!should_stop_simulation(philo->conf))
-			usleep(1000);
+			usleep(100);
 		pthread_mutex_unlock(philo->left_fork);
 		return ;
 	}
@@ -68,7 +68,7 @@ void	sleep_and_think(t_philo *philo)
 	if (philo->conf->philo_count % 2 == 0)
 		return ;
 	if (philo->conf->philo_count && philo->conf->eat_time_ms >= philo->conf->sleep_time_ms)
-		precise_usleep(philo->conf->eat_time_ms + 1, philo->conf);
+		precise_usleep(philo->conf->eat_time_ms, philo->conf);
 }
 
 void	release_forks(t_philo *philo)
@@ -88,7 +88,7 @@ void	*philosopher_routine(void *arg)
 
 	philo = (t_philo *)arg;
 	if (philo->id % 2 == 0)
-		usleep(1000);
+		usleep(35);
 	while (!should_stop_simulation(philo->conf))
 	{
 		take_forks(philo);
