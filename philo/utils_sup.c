@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_sup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
+/*   By: hghoutan <hghoutan@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 16:45:49 by macbook           #+#    #+#             */
-/*   Updated: 2025/07/01 17:43:37 by macbook          ###   ########.fr       */
+/*   Updated: 2025/08/25 11:37:15 by hghoutan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ int	should_stop_simulation(t_philo_conf *conf)
 	return (stop);
 }
 
-void	precise_usleep(unsigned long time_ms)
+
+void	precise_usleep(unsigned long time_ms, t_philo_conf *conf)
 {
 	unsigned long	start;
 	unsigned long	current;
@@ -31,6 +32,9 @@ void	precise_usleep(unsigned long time_ms)
 	start = get_time_ms();
 	while (1)
 	{
+		if (should_stop_simulation(conf))
+			break ;
+			
 		current = get_time_ms();
 		remaining = time_ms - (current - start);
 		if (current - start >= time_ms)

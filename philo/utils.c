@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
+/*   By: hghoutan <hghoutan@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 20:37:22 by macbook           #+#    #+#             */
-/*   Updated: 2025/07/01 16:46:26 by macbook          ###   ########.fr       */
+/*   Updated: 2025/08/25 11:38:59 by hghoutan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,11 @@
 void	print_status(t_philo *philo, const char *status)
 {
 	pthread_mutex_lock(&philo->conf->print_mutex);
-	printf("%09lu %d %s\n", get_adjusted_time_ms(philo->conf), philo->id,
-		status);
+	if (!should_stop_simulation(philo->conf))
+	{
+		printf("%09lu %d %s\n", get_adjusted_time_ms(philo->conf), 
+			   philo->id, status);
+	}
 	pthread_mutex_unlock(&philo->conf->print_mutex);
 }
 

@@ -6,7 +6,7 @@
 /*   By: hghoutan <hghoutan@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:29 by macbook           #+#    #+#             */
-/*   Updated: 2025/08/25 11:31:26 by hghoutan         ###   ########.fr       */
+/*   Updated: 2025/08/25 11:38:30 by hghoutan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	eat(t_philo *philo)
 	if (should_stop_simulation(philo->conf))
 		return ;
 	print_status(philo, "is eating");
-	precise_usleep(philo->conf->eat_time_ms);
+	precise_usleep(philo->conf->eat_time_ms, philo->conf);
 	pthread_mutex_lock(&philo->conf->meal_mutex);
 	philo->meals_eaten++;
 	philo->last_meal_time = get_time_ms();
@@ -60,7 +60,7 @@ void	sleep_and_think(t_philo *philo)
 	if (should_stop_simulation(philo->conf))
 		return ;
 	print_status(philo, "is sleeping");
-	precise_usleep(philo->conf->sleep_time_ms);
+	precise_usleep(philo->conf->sleep_time_ms, philo->conf);
 	if (should_stop_simulation(philo->conf))
 		return ;
 
@@ -68,7 +68,7 @@ void	sleep_and_think(t_philo *philo)
 	if (philo->conf->philo_count % 2 == 0)
 		return ;
 	if (philo->conf->philo_count && philo->conf->eat_time_ms >= philo->conf->sleep_time_ms)
-		precise_usleep(philo->conf->eat_time_ms + 1);
+		precise_usleep(philo->conf->eat_time_ms + 1, philo->conf);
 }
 
 void	release_forks(t_philo *philo)
