@@ -6,7 +6,7 @@
 /*   By: hghoutan <hghoutan@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:04:29 by macbook           #+#    #+#             */
-/*   Updated: 2025/08/24 17:42:34 by hghoutan         ###   ########.fr       */
+/*   Updated: 2025/08/25 11:31:26 by hghoutan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,6 @@ void	eat(t_philo *philo)
 
 void	sleep_and_think(t_philo *philo)
 {
-	unsigned long	think_time;
-
 	if (should_stop_simulation(philo->conf))
 		return ;
 	print_status(philo, "is sleeping");
@@ -67,11 +65,10 @@ void	sleep_and_think(t_philo *philo)
 		return ;
 
 	print_status(philo, "is thinking");
-	think_time = (philo->conf->die_time_ms - philo->conf->eat_time_ms - philo->conf->sleep_time_ms);
-	if (think_time > 0 && think_time < philo->conf->die_time_ms / 2)
-		precise_usleep(think_time / 2);
-	else if (philo->conf->philo_count % 2 == 1)
-		precise_usleep(1);
+	if (philo->conf->philo_count % 2 == 0)
+		return ;
+	if (philo->conf->philo_count && philo->conf->eat_time_ms >= philo->conf->sleep_time_ms)
+		precise_usleep(philo->conf->eat_time_ms + 1);
 }
 
 void	release_forks(t_philo *philo)
