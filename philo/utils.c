@@ -6,7 +6,7 @@
 /*   By: hghoutan <hghoutan@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 20:37:22 by macbook           #+#    #+#             */
-/*   Updated: 2025/08/25 11:38:59 by hghoutan         ###   ########.fr       */
+/*   Updated: 2025/08/25 14:35:53 by hghoutan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,16 @@
 void	print_status(t_philo *philo, const char *status)
 {
 	pthread_mutex_lock(&philo->conf->print_mutex);
-	if (!should_stop_simulation(philo->conf))
+	pthread_mutex_lock(&philo->conf->death_mutex);
+	int should_stop = philo->conf->someone_died || philo->conf->simulation_stop;
+	pthread_mutex_unlock(&philo->conf->death_mutex);
+	
+	if (!should_stop)
 	{
 		printf("%09lu %d %s\n", get_adjusted_time_ms(philo->conf), 
 			   philo->id, status);
 	}
+	
 	pthread_mutex_unlock(&philo->conf->print_mutex);
 }
 

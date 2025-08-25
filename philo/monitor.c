@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitor.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
+/*   By: hghoutan <hghoutan@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:07:56 by macbook           #+#    #+#             */
-/*   Updated: 2025/07/01 17:43:08 by macbook          ###   ########.fr       */
+/*   Updated: 2025/08/25 14:36:02 by hghoutan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,18 +21,21 @@ int	check_philo_death(t_philo_conf *conf, unsigned int i)
 	now = get_time_ms();
 	last_meal = conf->philos[i].last_meal_time;
 	pthread_mutex_unlock(&conf->meal_mutex);
+	
 	if (now - last_meal > conf->die_time_ms)
 	{
+		pthread_mutex_lock(&conf->print_mutex);
 		pthread_mutex_lock(&conf->death_mutex);
+		
 		if (!conf->someone_died && !conf->simulation_stop)
 		{
 			conf->someone_died = 1;
-			pthread_mutex_lock(&conf->print_mutex);
 			printf("%09lu %d died\n", get_adjusted_time_ms(conf),
 				conf->philos[i].id);
-			pthread_mutex_unlock(&conf->print_mutex);
 		}
+		
 		pthread_mutex_unlock(&conf->death_mutex);
+		pthread_mutex_unlock(&conf->print_mutex);
 		return (1);
 	}
 	return (0);
